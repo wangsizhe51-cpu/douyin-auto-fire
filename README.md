@@ -42,6 +42,8 @@
 
 包含 Cookie 获取、配置生成、GitHub Secrets、Dry Run、定时任务、多账号和失败诊断等完整图文步骤。
 
+想从手机手动启动，可先看[手机快速运行入口](docs/phone-run.md)。
+
 ### 🐳 [Docker 部署 →](docs/docker.md)
 
 **推荐已有 Linux 服务器、NAS、1Panel 或宝塔环境的用户使用。** 镜像已经包含 Python、Playwright 和 Chromium，只需要在宿主机保存 `config.json`、`cookie.json` 和日志目录。

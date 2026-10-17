@@ -213,7 +213,7 @@ Send Douyin Messages
 Run workflow
 ```
 
-第一次运行时，将 `dry_run` 开启（即 `true`），然后点击 **Run workflow**。
+`dry_run` 默认已勾选（`true`）。第一次直接点击 **Run workflow** 即可做检查，不会发送消息。
 
 ![运行 GitHub Actions](https://img.908988.xyz/file/教程/douyin-auto-fire/NLFF8g94.webp)
 
@@ -235,13 +235,14 @@ Run
 
 Dry Run 成功后，再手动运行一次工作流。
 
-这一次关闭 `dry_run`，也就是：
+确认检查通过、且目标好友配置无误后，正式发送时才关闭 `dry_run`，并在 `confirm_send` 中输入大写 `SEND`：
 
 ```text
 dry_run = false
+confirm_send = SEND
 ```
 
-然后运行。
+如果没有同时填写 `SEND`，工作流会停止且不会发送消息。
 
 这一次程序会真正向好友发送消息。
 
@@ -281,9 +282,14 @@ on:
   workflow_dispatch:
     inputs:
       dry_run:
-        description: Only verify login and friends without sending
+        description: 默认只检查、不发送；取消勾选才会尝试正式发送
         type: boolean
-        default: false
+        default: true
+      confirm_send:
+        description: 正式发送时必须填写大写 SEND，否则不会发送
+        type: string
+        required: false
+        default: ""
 ```
 
 本项目已经默认支持，一般不需要修改。
@@ -413,12 +419,13 @@ Bearer github_pat_xxxxxxxxxxxxxxxxx
 {
   "ref": "main",
   "inputs": {
-    "dry_run": "false"
+    "dry_run": "false",
+    "confirm_send": "SEND"
   }
 }
 ```
 
-`dry_run = false` 表示正式执行发送任务。
+`dry_run = false` 且 `confirm_send = SEND` 才会正式执行发送任务；缺少确认文本时工作流会失败退出，不发送消息。
 
 ### 8.8 设置每天运行时间
 
@@ -451,7 +458,7 @@ Actions
 Send Douyin Messages
 ```
 
-如果出现一条新的 Workflow Run，说明 cron-job.org 已经成功触发 GitHub Actions。检查 Dry Run 日志没有问题后，再把 Request Body 中的 `dry_run` 改为 `false`。
+如果出现一条新的 Workflow Run，说明 cron-job.org 已经成功触发 GitHub Actions。检查 Dry Run 日志没有问题后，如需正式发送，再把 Request Body 中的 `dry_run` 改为 `false` 并增加 `confirm_send` 为 `SEND`。
 
 GitHub API 成功接收触发请求时通常返回状态码：
 
@@ -486,7 +493,8 @@ Asia/Shanghai
 {
   "ref": "main",
   "inputs": {
-    "dry_run": "false"
+    "dry_run": "false",
+    "confirm_send": "SEND"
   }
 }
 ```

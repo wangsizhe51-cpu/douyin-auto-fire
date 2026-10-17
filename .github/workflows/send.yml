@@ -4,9 +4,14 @@ on:
   workflow_dispatch:
     inputs:
       dry_run:
-        description: Only verify login and friends without sending
+        description: 默认只检查、不发送；取消勾选才会尝试正式发送
         type: boolean
-        default: false
+        default: true
+      confirm_send:
+        description: 正式发送时必须填写大写 SEND，否则不会发送
+        type: string
+        required: false
+        default: ""
   # 使用 GitHub Actions 的日程时把下面三行注释删掉；用外部 cron 不用管
   # schedule:
   #   - cron: "0 0 * * *"
@@ -109,6 +114,15 @@ jobs:
               encoding="utf-8",
           )
           PY
+      - name: Require explicit confirmation for real sending
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run == false }}
+        env:
+          CONFIRM_SEND: ${{ inputs.confirm_send }}
+        run: |
+          if [[ "$CONFIRM_SEND" != "SEND" ]]; then
+            echo "::error::Real sending requires confirm_send=SEND. No messages were sent."
+            exit 1
+          fi
       - name: Run
         shell: bash
         run: |
