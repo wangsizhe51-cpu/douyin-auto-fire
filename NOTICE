@@ -1,0 +1,12 @@
+Based on unmev/douyin-auto-fire:
+https://github.com/unmev/douyin-auto-fire
+
+Required Notice: Copyright (c) 2026 unmev
+Required Notice: Copyright (c) 2026 wangsizhe51-cpu (Mac local-mode additions)
+
+This fork adds a persistent local browser profile, Chinese Mac menus,
+confirmation-based quick sending, portable Mac setup and desktop launchers.
+Friend matching and message-sending logic are derived from the upstream project.
+
+This distribution retains the PolyForm Noncommercial License 1.0.0.
+See LICENSE and https://polyformproject.org/licenses/noncommercial/1.0.0

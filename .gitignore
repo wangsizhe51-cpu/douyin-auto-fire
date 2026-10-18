@@ -12,3 +12,9 @@ config/tasks/
 config.json
 storage-state.json
 storage_state/
+local-mac/
+config/accounts.json
+cookie.json
+cookies.json
+*.log
+.DS_Store

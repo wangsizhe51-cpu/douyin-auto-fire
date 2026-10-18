@@ -13,3 +13,6 @@ storage-state.json
 storage_state/
 artifacts/
 *.log
+local-mac/
+cookie.json
+cookies.json

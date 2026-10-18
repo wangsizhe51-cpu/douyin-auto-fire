@@ -80,22 +80,27 @@ async def open_douyin(settings: Settings) -> AsyncIterator[BrowserSession]:
         launch_args = {"headless": settings.headless}
         if settings.browser_path:
             launch_args["executable_path"] = settings.browser_path
-        browser = await playwright.chromium.launch(**launch_args)
-
         context_args = {"viewport": {"width": 1440, "height": 1000}, "locale": "zh-CN"}
-        if settings.storage_state:
-            state = parse_auth_json(settings.storage_state, "DOUYIN_STORAGE_STATE")
-            if not isinstance(state, dict):
-                raise ConfigError("DOUYIN_STORAGE_STATE 必须是 JSON 对象")
-            context_args["storage_state"] = state
-        context = await browser.new_context(**context_args)
-        if not settings.storage_state and settings.cookie:
-            cookies = parse_auth_json(settings.cookie, "DOUYIN_COOKIE")
-            if not isinstance(cookies, list):
-                raise ConfigError("DOUYIN_COOKIE 必须是 Cookie 数组")
-            await context.add_cookies(_normalize_cookies(cookies))
+        if settings.profile_dir:
+            settings.profile_dir.mkdir(parents=True, exist_ok=True, mode=0o700)
+            context = await playwright.chromium.launch_persistent_context(
+                str(settings.profile_dir), **launch_args, **context_args
+            )
+        else:
+            browser = await playwright.chromium.launch(**launch_args)
+            if settings.storage_state:
+                state = parse_auth_json(settings.storage_state, "DOUYIN_STORAGE_STATE")
+                if not isinstance(state, dict):
+                    raise ConfigError("DOUYIN_STORAGE_STATE 必须是 JSON 对象")
+                context_args["storage_state"] = state
+            context = await browser.new_context(**context_args)
+            if not settings.storage_state and settings.cookie:
+                cookies = parse_auth_json(settings.cookie, "DOUYIN_COOKIE")
+                if not isinstance(cookies, list):
+                    raise ConfigError("DOUYIN_COOKIE 必须是 Cookie 数组")
+                await context.add_cookies(_normalize_cookies(cookies))
 
-        page = await context.new_page()
+        page = (context.pages[0] if settings.profile_dir and context.pages else await context.new_page())
         if settings.trace:
             await context.tracing.start(screenshots=True, snapshots=True, sources=False)
         yield BrowserSession(page=page, context=context)

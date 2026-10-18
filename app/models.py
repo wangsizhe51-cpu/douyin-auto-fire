@@ -59,6 +59,7 @@ class Settings:
     webhook_url: str | None = None
     webhook_headers: dict[str, str] | None = None
     webhook_template: str | None = None
+    profile_dir: Path | None = None
 
 
 @dataclass(frozen=True)

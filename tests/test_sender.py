@@ -758,10 +758,14 @@ class _VirtualClock:
 
 
 async def _make_real_page():
+    import os
     from playwright.async_api import async_playwright
 
     pw = await async_playwright().start()
-    browser = await pw.chromium.launch()
+    options = {}
+    if os.environ.get("TEST_BROWSER_PATH"):
+        options["executable_path"] = os.environ["TEST_BROWSER_PATH"]
+    browser = await pw.chromium.launch(**options)
     page = await browser.new_page()
     await page.set_content(_REAL_DOM_BASE)
     # Keep handles for teardown.

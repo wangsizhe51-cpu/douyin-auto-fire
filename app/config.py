@@ -41,6 +41,7 @@ def load_settings(env_file: str | Path | None = None) -> Settings:
         webhook_url=webhook_url,
         webhook_headers=webhook_headers,
         webhook_template=webhook_template,
+        profile_dir=Path(os.environ["DOUYIN_PROFILE_DIR"]).expanduser() if _optional_env("DOUYIN_PROFILE_DIR") else None,
     )
 
 

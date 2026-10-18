@@ -35,8 +35,8 @@ async def run(dry_run: bool = False, env_file: str | None = None) -> int:
     aliases = build_target_aliases(task.targets)
     _configure_logging(settings.artifacts_dir, aliases)
 
-    if not settings.storage_state and not settings.cookie:
-        raise ConfigError("必须配置 DOUYIN_STORAGE_STATE 或 DOUYIN_COOKIE")
+    if not settings.storage_state and not settings.cookie and not settings.profile_dir:
+        raise ConfigError("必须配置 DOUYIN_STORAGE_STATE、DOUYIN_COOKIE 或本地浏览器资料目录")
 
     # 初始化监控指标
     metrics = Metrics()

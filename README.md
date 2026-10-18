@@ -1,141 +1,88 @@
-# 🔥 抖音自动续火花
+# 抖音续火花 · Mac 本地版
 
-[![GitHub stars](https://img.shields.io/github/stars/unmev/douyin-auto-fire?style=flat-square)](https://github.com/unmev/douyin-auto-fire/stargazers)
-![Visitors](https://visitor-badge.laobi.icu/badge?page_id=unmev.douyin-auto-fire)
+在 Mac 上双击启动，核对好友和文字后点击「发送」。第一次扫码登录，以后复用本机登录资料；电脑只需在运行期间保持唤醒和联网。
 
-> 定时自动向抖音好友发送消息，保持火花不断。基于 Playwright 模拟真实浏览器操作，可使用 GitHub Actions、Docker、云服务器或 Windows 电脑定时运行。
+这是 [unmev/douyin-auto-fire](https://github.com/unmev/douyin-auto-fire) 的派生版本。好友定位、消息发送和发送状态检查沿用上游，本仓库增加 Mac 本地使用流程。源码按 **PolyForm Noncommercial 1.0.0（非商业用途）** 公开，详见 [LICENSE](LICENSE) 和 [NOTICE](NOTICE)。
 
-![douyin-auto-fire-banner.svg](https://img.908988.xyz/file/教程/douyin-auto-fire/5pdab8It.svg)
+## 本地版增加了什么
 
-## 项目介绍
+- 可见的 Chrome / Chromium 窗口，扫码登录资料保存在项目内的独立目录。
+- 中文菜单：登录、设置好友和文字、只检查好友、正式发送。
+- 快捷入口：双击 → 核对弹窗 → 点击发送，结束后程序退出。
+- 桌面快捷方式，以及项目专用 Python 环境的安装脚本。
+- 本地发送历史：当天已成功或结果不确定的同一条消息不自动重发。
 
-`douyin-auto-fire` 是一个基于 Python + Playwright 的抖音私信自动发送工具。
+## 安装
 
-通过模拟浏览器操作，可以按照配置自动向指定好友发送文字、图片或抖音原生表情，并支持多种运行方式。
+需要 macOS、Python 3.11 或更新版本。建议装好 Google Chrome；未找到 Chrome 时安装脚本会下载 Chromium。Python 可从 [Python 官方网站](https://www.python.org/downloads/macos/) 安装。
 
-如果只是想快速使用，推荐 **GitHub Actions**：不需要自己购买服务器，也不需要电脑长期保持开机。已有 Linux 服务器或 NAS 的用户推荐使用 **Docker**，也可以使用传统 Python + systemd 方式部署到云服务器，或者直接在 Windows 电脑上运行。
+1. 点击仓库页面的 **Code → Download ZIP**，解压到准备长期保留的位置；或者执行：
 
-> ⚠️ 本项目使用 Cookie / Storage State 作为登录凭证。请只保存在安全位置，不要提交到公开仓库，也不要分享给他人。
+   ```bash
+   git clone https://github.com/wangsizhe51-cpu/douyin-auto-fire.git
+   cd douyin-auto-fire
+   ```
 
-## ✨ 已实现功能
+2. 双击 `安装Mac版.command`，等待依赖安装完成。
+3. 双击 `本地续火花.command`，按下一节完成首次设置。
+4. 可选：双击 `创建桌面入口.command`，把快捷发送入口放到桌面。
 
-- ⏰ **定时自动发送**：支持 GitHub Actions、Docker Cron、systemd Timer 等方式定时运行
-- 💬 **多种消息类型**：支持文字、图片（PNG/JPG/GIF/WebP）和抖音原生表情
-- 🎲 **随机消息**：支持从多条候选消息中随机选择
-- 👥 **多好友支持**：可以同时为多个好友配置发送任务
-- 👤 **多账号支持**：GitHub Actions 当前最多支持 5 个抖音账号
-- 🧪 **Dry Run 模式**：只验证登录状态和好友定位，不真实发送消息
-- 🔒 **防重复发送**：支持记录发送历史，减少重复触发导致的重复发送
-- 🔔 **钉钉通知**：支持通过钉钉机器人接收任务结果
-- 🔗 **通用 Webhook**：支持企业微信、飞书、Slack、Discord、Telegram 等任意 Webhook 通知
-- 🛡️ **失败诊断**：失败时可保存日志、页面截图和 Playwright Trace
-- 🔐 **登录凭证灵活**：支持 Cookie 或浏览器 Storage State
-- ⏱️ **模拟真人操作**：支持随机发送间隔和输入节奏
-
-## 🚀 快速使用教程
-
-根据自己的使用场景选择一种部署方式即可：
-
-### ☁️ [GitHub Actions 部署 →](docs/github-actions.md)
-
-**推荐大多数用户使用。** 无需服务器，电脑也不需要长期在线，Fork 后配置 Secrets 即可每天自动运行。
-
-包含 Cookie 获取、配置生成、GitHub Secrets、Dry Run、定时任务、多账号和失败诊断等完整图文步骤。
-
-想从手机手动启动，可先看[手机快速运行入口](docs/phone-run.md)。
-
-### 🐳 [Docker 部署 →](docs/docker.md)
-
-**推荐已有 Linux 服务器、NAS、1Panel 或宝塔环境的用户使用。** 镜像已经包含 Python、Playwright 和 Chromium，只需要在宿主机保存 `config.json`、`cookie.json` 和日志目录。
-
-默认镜像：
-
-```text
-ghcr.io/unmev/douyin-auto-fire:latest
-```
-
-启动：
+如果下载 ZIP 后提示文件不可执行，在项目文件夹打开终端执行：
 
 ```bash
-docker compose up -d
+chmod u+x *.command
+zsh 安装Mac版.command
 ```
 
-### 🖥️ [云服务器部署 →](docs/server.md)
+这些是可阅读的本地脚本，没有签名或公证的 App 安装包。若 macOS 要求确认来源，请先查看脚本，再按系统提供的确认方式打开；无需关闭系统安全功能。
 
-适合希望使用传统 Python + systemd 方式部署的 Linux VPS / 云服务器用户。
+## 首次使用
 
-使用 Python + Playwright + Headless Chromium 运行，并通过 `systemd Timer` 每天自动执行。教程包含环境安装、Cookie 配置、Dry Run、systemd 定时、日志查看和项目更新。
+在 `本地续火花.command` 的菜单中依次选择：
 
-### 🪟 [Windows 电脑部署 →](docs/windows.md)
+1. **登录**：在弹出的浏览器中扫码，看到私信列表后回终端按回车。
+2. **设置好友和文字**：好友昵称一行一个，空行结束，再输入要发送的文字并保存。建议先用一位好友验证。
+3. **只检查好友**：验证登录和定位，不发送消息。
+4. **正式发送**：核对名单及文字，输入「发送」执行。
 
-适合想先在自己的电脑上运行或长期使用 Windows 电脑挂机的用户。
+第一次设置结束后输入 `0` 关闭菜单。
 
-支持直接运行项目自带的扫码登录脚本生成 `storage-state.json`，也可以使用 Cookie，并可通过 Windows 任务计划程序每天自动运行。
+## 每天怎么用
 
-> 第一次使用无论选择哪种部署方式，都建议先配置 **1 个账号 + 1 个好友 + 1 条文字消息**，先执行 Dry Run，确认正常后再真实发送和增加其他配置。
+双击 `快捷续火花.command`（或桌面同名入口），核对好友和文字后点击「发送」。自动使用已保存的配置，完成后程序退出；终端窗口是否自动关闭取决于 Terminal 设置。
 
-## 📢 通知配置
+修改好友或文字、更新过期登录时，仍使用 `本地续火花.command`。旧菜单和快捷入口不能同时运行；旧菜单还开着时先输入 `0` 退出。
 
-项目支持任务完成后发送通知到多种平台：
+## 使用边界
 
-- **通用 Webhook 配置** - 支持企业微信、飞书、Slack、Discord、Telegram 等任意 Webhook 端点
-- **钉钉机器人** - 通过环境变量 `DINGTALK_WEBHOOK` 和 `DINGTALK_SECRET` 配置
+- 本地版需要 Mac 唤醒并联网；不是手机独立运行方案，也没有启用自动定时。
+- 抖音页面变化、登录验证或消息限制可能造成失败。检查模式通过只代表定位通过，实际送达应查看聊天记录。
+- 本地版本已在维护者的 Mac 上验证运行，其他系统版本和账号仍需自行测试；不保证自动发送必然维持火花。
+- 本地菜单保存的配置会在遇到错误时停止处理后续好友。发送失败或结果不确定时，应先检查聊天记录，不要删除历史后反复重试。
 
-通知功能完全可选，不配置不影响消息发送。
+## 隐私与数据
 
-## 🧰 技术栈
+本地模式不要求 GitHub Secrets，也不会调用上游的通知 Webhook。登录资料、好友配置、日志和发送历史保存在 `local-mac/`；该目录已同时排除在 Git 和 Docker 打包范围之外。
 
-| 类别 | 内容 |
-| --- | --- |
-| 语言 | Python 3.11+ |
-| 浏览器自动化 | [Playwright](https://playwright.dev/python/) + Chromium |
-| 定时调度 | GitHub Actions / Docker Cron / systemd Timer / Windows 任务计划程序 |
-| 环境变量 | python-dotenv |
-| 时区 | tzdata |
-| 通知 | 钉钉机器人 / 通用 Webhook（企业微信、飞书、Slack 等） |
-| 支持平台 | Windows / macOS / Linux / Docker |
+不要上传 `local-mac/`、`.env`、Cookie、登录二维码、聊天截图或包含私人信息的日志。报告问题时请先遮盖这些内容。GitHub 的源码 ZIP 不包含你的本地配置。
 
-主要依赖：
+## 开发与上游功能
 
-```text
-playwright>=1.54,<2
-python-dotenv>=1.1,<2
-tzdata>=2025.2
+```bash
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements-dev.txt
+.venv/bin/python -m playwright install chromium
+.venv/bin/python -m pytest -q
 ```
 
-## ⚠️ 注意事项
+Mac 菜单入口：`local_mac.py`。可通过 `python local_mac.py --quick` 打开发送确认窗口。
 
-- Cookie、Storage State 和发送配置不要直接提交到公开仓库。
-- 修改好友、消息或表情配置后，建议先运行一次 Dry Run。
-- 同一个抖音账号不要同时运行多个自动发送任务，避免重复发送。
-- GitHub-hosted Runner、Docker 主机或云服务器网络环境可能触发抖音安全验证。
-- 如果 Cookie / Storage State 失效或抖音要求验证码，需要本人重新完成登录验证。
-- 抖音网页结构发生变化时，自动化功能可能需要同步适配。
+浏览器集成测试默认使用 Playwright 的 Chromium；已有 Chrome 的开发者也可设置 `TEST_BROWSER_PATH` 为浏览器可执行文件路径，使用该浏览器运行同一套测试。
 
-⭐ 支持一下
+上游的 [Windows](docs/windows.md)、[Docker](docs/docker.md)、[服务器](docs/server.md)、[GitHub Actions](docs/github-actions.md) 说明仍保留，作为其他部署方式的参考；本仓库主要维护 Mac 本地流程。上游专用的 Docker 发布和 CNB 镜像同步工作流在本 fork 中不会执行。
 
-如果这个项目帮你省下了每天手动续火花的时间，欢迎点个 Star ⭐ 支持一下！
+## 许可证与致谢
 
-你的每一个 Star 都是我继续维护、修 Bug 和增加新功能的动力。
+感谢原作者 [unmev](https://github.com/unmev) 和上游贡献者。本项目为基于原作的修改版，并非独立重写。
 
-## Star History
-
-<a href="https://www.star-history.com/?repos=unmev%2Fdouyin-auto-fire&type=date&legend=top-left">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=unmev/douyin-auto-fire&type=date&theme=dark&legend=top-left&sealed_token=TkydV0nYtjJ4qP2Nb5Y9f7po-HgwD2pBSxu77UV_GBPhEVJk1qucxdlno9qqdKfANCMyyjgMRjk4QWqZlHQsHJbB3sEPxDIc3ExjCvi-uNJ1crMXnMCytA" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=unmev/douyin-auto-fire&type=date&legend=top-left&sealed_token=TkydV0nYtjJ4qP2Nb5Y9f7po-HgwD2pBSxu77UV_GBPhEVJk1qucxdlno9qqdKfANCMyyjgMRjk4QWqZlHQsHJbB3sEPxDIc3ExjCvi-uNJ1crMXnMCytA" />
-   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=unmev/douyin-auto-fire&type=date&legend=top-left&sealed_token=TkydV0nYtjJ4qP2Nb5Y9f7po-HgwD2pBSxu77UV_GBPhEVJk1qucxdlno9qqdKfANCMyyjgMRjk4QWqZlHQsHJbB3sEPxDIc3ExjCvi-uNJ1crMXnMCytA" />
- </picture>
-</a>
-
-## 友情链接
-
-- [LINUX DO](https://linux.do/) - 新的理想型社区
-
-## License
-
-本项目采用 [PolyForm Noncommercial License 1.0.0](LICENSE)。
-
-允许个人学习、研究、修改和非商业用途使用本项目；未经授权，不得将本项目或其衍生版本用于商业用途、收费服务、付费部署、倒卖或其他营利性场景。
-
-如需商业授权，请联系项目维护者。
+沿用 [PolyForm Noncommercial 1.0.0](https://polyformproject.org/licenses/noncommercial/1.0.0)，保留原版权声明。可以在许可证允许的非商业用途下使用、修改和分发；商业用途请联系相关权利人获取授权。公开源码不等于允许自由商用。
